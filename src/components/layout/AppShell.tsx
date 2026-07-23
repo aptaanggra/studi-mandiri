@@ -1,6 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, FlaskConical, GraduationCap, LineChart, ScanLine } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { BookOpen, FlaskConical, GraduationCap, LineChart, LogOut, ScanLine } from "lucide-react";
 import type { ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const links = [
   { to: "/", label: "Beranda", icon: GraduationCap },
@@ -12,6 +14,16 @@ const links = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+
+  async function handleSignOut() {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border">
@@ -38,6 +50,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
+          <button
+            onClick={handleSignOut}
+            title="Keluar"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Keluar</span>
+          </button>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 sm:px-6 py-6 pb-24">{children}</main>
