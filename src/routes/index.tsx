@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
-import { getOrCreateUserId } from "@/lib/user-id";
+import { useAuthUser } from "@/lib/user-id";
 import { getConfig, saveConfig } from "@/lib/config.functions";
 import { BookOpen, FlaskConical, LineChart, ScanLine, Sparkles } from "lucide-react";
 
@@ -20,8 +20,8 @@ const JENJANG = [
 ] as const;
 
 function HomePage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => setUserId(getOrCreateUserId()), []);
+  
+  const { userId } = useAuthUser();
 
   const fetchConfig = useServerFn(getConfig);
   const { data: config, isLoading, refetch } = useQuery({

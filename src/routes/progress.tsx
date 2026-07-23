@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+
 import { AppShell } from "@/components/layout/AppShell";
-import { getOrCreateUserId } from "@/lib/user-id";
+import { useAuthUser } from "@/lib/user-id";
 import { getProgress } from "@/lib/progress.functions";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -14,8 +14,8 @@ export const Route = createFileRoute("/progress")({
 });
 
 function ProgressPage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => setUserId(getOrCreateUserId()), []);
+  
+  const { userId } = useAuthUser();
   const fetchFn = useServerFn(getProgress);
   const { data } = useQuery({
     queryKey: ["progress", userId],
