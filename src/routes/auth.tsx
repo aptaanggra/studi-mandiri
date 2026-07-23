@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { GraduationCap, Sparkles } from "lucide-react";
+
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -34,18 +34,20 @@ function AuthPage() {
   async function signInGoogle() {
     setError(null);
     setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    const { error: err } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+        queryParams: { prompt: "select_account" },
+      },
     });
-    if (result.error) {
-      setError(result.error.message ?? "Gagal masuk dengan Google");
+    if (err) {
+      setError(err.message ?? "Gagal masuk dengan Google");
       setLoading(false);
-      return;
     }
-    if (result.redirected) return;
-    // Popup flow — session sudah di-set; navigation ditangani oleh listener di atas.
-    setLoading(false);
+    // Browser akan redirect ke Google; setelah kembali, session dipulihkan otomatis oleh supabase-js.
   }
+
 
   return (
     <div className="min-h-screen grid place-items-center px-4 bg-background">
