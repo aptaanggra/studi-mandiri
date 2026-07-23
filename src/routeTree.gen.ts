@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as EssayRouteImport } from './routes/essay'
 import { Route as ChatRouteImport } from './routes/chat'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalyzeRouteImport } from './routes/analyze'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
@@ -29,6 +30,11 @@ const EssayRoute = EssayRouteImport.update({
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyzeRoute = AnalyzeRouteImport.update({
@@ -50,6 +56,7 @@ const ChatThreadIdRoute = ChatThreadIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analyze': typeof AnalyzeRoute
+  '/auth': typeof AuthRoute
   '/chat': typeof ChatRouteWithChildren
   '/essay': typeof EssayRoute
   '/progress': typeof ProgressRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analyze': typeof AnalyzeRoute
+  '/auth': typeof AuthRoute
   '/chat': typeof ChatRouteWithChildren
   '/essay': typeof EssayRoute
   '/progress': typeof ProgressRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analyze': typeof AnalyzeRoute
+  '/auth': typeof AuthRoute
   '/chat': typeof ChatRouteWithChildren
   '/essay': typeof EssayRoute
   '/progress': typeof ProgressRoute
@@ -77,16 +86,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/analyze'
+    | '/auth'
     | '/chat'
     | '/essay'
     | '/progress'
     | '/chat/$threadId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analyze' | '/chat' | '/essay' | '/progress' | '/chat/$threadId'
+  to:
+    | '/'
+    | '/analyze'
+    | '/auth'
+    | '/chat'
+    | '/essay'
+    | '/progress'
+    | '/chat/$threadId'
   id:
     | '__root__'
     | '/'
     | '/analyze'
+    | '/auth'
     | '/chat'
     | '/essay'
     | '/progress'
@@ -96,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyzeRoute: typeof AnalyzeRoute
+  AuthRoute: typeof AuthRoute
   ChatRoute: typeof ChatRouteWithChildren
   EssayRoute: typeof EssayRoute
   ProgressRoute: typeof ProgressRoute
@@ -122,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/chat'
       fullPath: '/chat'
       preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analyze': {
@@ -161,6 +187,7 @@ const ChatRouteWithChildren = ChatRoute._addFileChildren(ChatRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyzeRoute: AnalyzeRoute,
+  AuthRoute: AuthRoute,
   ChatRoute: ChatRouteWithChildren,
   EssayRoute: EssayRoute,
   ProgressRoute: ProgressRoute,

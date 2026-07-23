@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ImagePicker } from "@/components/ImagePicker";
 import { Markdown } from "@/components/Markdown";
-import { getOrCreateUserId } from "@/lib/user-id";
+import { useAuthUser } from "@/lib/user-id";
 import { getThread, sendMessage } from "@/lib/chat.functions";
 import { ArrowLeft, Send } from "lucide-react";
 
@@ -17,8 +17,8 @@ export const Route = createFileRoute("/chat/$threadId")({
 
 function ThreadPage() {
   const { threadId } = Route.useParams();
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => setUserId(getOrCreateUserId()), []);
+  
+  const { userId } = useAuthUser();
 
   const fetchThread = useServerFn(getThread);
   const send = useServerFn(sendMessage);

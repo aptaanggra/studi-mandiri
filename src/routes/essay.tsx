@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { Markdown } from "@/components/Markdown";
-import { getOrCreateUserId } from "@/lib/user-id";
+import { useAuthUser } from "@/lib/user-id";
 import { getTodayEssay, listEssays, submitEssay } from "@/lib/essay.functions";
 
 export const Route = createFileRoute("/essay")({
@@ -14,8 +14,8 @@ export const Route = createFileRoute("/essay")({
 });
 
 function EssayPage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => setUserId(getOrCreateUserId()), []);
+  
+  const { userId } = useAuthUser();
   const today = useServerFn(getTodayEssay);
   const list = useServerFn(listEssays);
   const submit = useServerFn(submitEssay);

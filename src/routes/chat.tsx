@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ImagePicker } from "@/components/ImagePicker";
-import { getOrCreateUserId } from "@/lib/user-id";
+import { useAuthUser } from "@/lib/user-id";
 import { listThreads, startThread, deleteThread } from "@/lib/chat.functions";
 import { FlaskConical, Trash2 } from "lucide-react";
 
@@ -15,8 +15,8 @@ export const Route = createFileRoute("/chat")({
 });
 
 function ChatIndex() {
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => setUserId(getOrCreateUserId()), []);
+  
+  const { userId } = useAuthUser();
   const list = useServerFn(listThreads);
   const start = useServerFn(startThread);
   const del = useServerFn(deleteThread);

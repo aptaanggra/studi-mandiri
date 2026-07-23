@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { ImagePicker } from "@/components/ImagePicker";
 import { Markdown } from "@/components/Markdown";
-import { getOrCreateUserId } from "@/lib/user-id";
+import { useAuthUser } from "@/lib/user-id";
 import { analyzeWorksheet, getAnalysis, listAnalyses } from "@/lib/analyze.functions";
 
 export const Route = createFileRoute("/analyze")({
@@ -15,8 +15,8 @@ export const Route = createFileRoute("/analyze")({
 });
 
 function AnalyzePage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  useEffect(() => setUserId(getOrCreateUserId()), []);
+  
+  const { userId } = useAuthUser();
   const analyze = useServerFn(analyzeWorksheet);
   const list = useServerFn(listAnalyses);
   const getOne = useServerFn(getAnalysis);
