@@ -4,18 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { GraduationCap, Sparkles } from "lucide-react";
 
-
-
 export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
       { title: "Masuk · EduMandiri" },
       { name: "description", content: "Masuk ke EduMandiri untuk mulai belajar bersama AI pembimbing." },
+      { property: "og:title", content: "Masuk · EduMandiri" },
+      { property: "og:description", content: "Masuk ke EduMandiri untuk mulai belajar bersama AI pembimbing." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
 });
+
+function shouldUseDirectGoogleOAuth() {
+  const hostname = window.location.hostname;
+  return hostname.endsWith(".netlify.app") || hostname === "studi-mandiri.netlify.app";
+}
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -37,6 +44,21 @@ function AuthPage() {
     setError(null);
     setLoading(true);
     try {
+      if (shouldUseDirectGoogleOAuth()) {
+        const { error: authError } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.origin,
+            queryParams: { prompt: "select_account" },
+          },
+        });
+        if (authError) {
+          setError(authError.message ?? "Gagal masuk dengan Google");
+          setLoading(false);
+        }
+        return;
+      }
+
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
         extraParams: { prompt: "select_account" },
