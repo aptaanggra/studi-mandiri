@@ -10,7 +10,16 @@ import { analyzeWorksheet, getAnalysis, listAnalyses } from "@/lib/analyze.funct
 
 export const Route = createFileRoute("/analyze")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Analisa Tugas · EduMandiri" }] }),
+  head: () => ({
+    meta: [
+      { title: "Analisa Tugas · EduMandiri" },
+      { name: "description", content: "Unggah foto lembar tugas sekolah untuk dianalisa dan diberi penilaian oleh AI." },
+      { property: "og:title", content: "Analisa Tugas · EduMandiri" },
+      { property: "og:description", content: "Unggah foto lembar tugas sekolah untuk dianalisa dan diberi penilaian oleh AI." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AnalyzePage,
 });
 

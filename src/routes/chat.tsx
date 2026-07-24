@@ -10,7 +10,16 @@ import { FlaskConical, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/chat")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Diskusi Sains · EduMandiri" }] }),
+  head: () => ({
+    meta: [
+      { title: "Diskusi Sains · EduMandiri" },
+      { name: "description", content: "Buat thread eksplorasi sains dengan gambar pendukung dan bimbingan AI yang fokus." },
+      { property: "og:title", content: "Diskusi Sains · EduMandiri" },
+      { property: "og:description", content: "Buat thread eksplorasi sains dengan gambar pendukung dan bimbingan AI yang fokus." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ChatIndex,
 });
 

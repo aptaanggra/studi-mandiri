@@ -11,7 +11,16 @@ import { ArrowLeft, Send } from "lucide-react";
 
 export const Route = createFileRoute("/chat/$threadId")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Thread Diskusi · EduMandiri" }] }),
+  head: () => ({
+    meta: [
+      { title: "Thread Diskusi · EduMandiri" },
+      { name: "description", content: "Lanjutkan percakapan eksplorasi sains bersama AI pembimbing EduMandiri." },
+      { property: "og:title", content: "Thread Diskusi · EduMandiri" },
+      { property: "og:description", content: "Lanjutkan percakapan eksplorasi sains bersama AI pembimbing EduMandiri." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ThreadPage,
 });
 

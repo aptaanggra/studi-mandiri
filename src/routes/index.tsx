@@ -9,7 +9,16 @@ import { BookOpen, FlaskConical, LineChart, ScanLine, Sparkles } from "lucide-re
 
 export const Route = createFileRoute("/")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Beranda · EduMandiri" }] }),
+  head: () => ({
+    meta: [
+      { title: "Beranda · EduMandiri" },
+      { name: "description", content: "Atur jenjang belajar dan mulai belajar mandiri dengan AI pembimbing EduMandiri." },
+      { property: "og:title", content: "Beranda · EduMandiri" },
+      { property: "og:description", content: "Atur jenjang belajar dan mulai belajar mandiri dengan AI pembimbing EduMandiri." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: HomePage,
 });
 
