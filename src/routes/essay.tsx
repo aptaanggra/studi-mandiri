@@ -9,7 +9,16 @@ import { getTodayEssay, listEssays, submitEssay } from "@/lib/essay.functions";
 
 export const Route = createFileRoute("/essay")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Soal Esai · EduMandiri" }] }),
+  head: () => ({
+    meta: [
+      { title: "Soal Esai · EduMandiri" },
+      { name: "description", content: "Jawab soal esai harian singkat dan dapatkan umpan balik AI untuk memperbaiki pemahaman." },
+      { property: "og:title", content: "Soal Esai · EduMandiri" },
+      { property: "og:description", content: "Jawab soal esai harian singkat dan dapatkan umpan balik AI untuk memperbaiki pemahaman." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: EssayPage,
 });
 

@@ -9,7 +9,16 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 
 export const Route = createFileRoute("/progress")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Progres · EduMandiri" }] }),
+  head: () => ({
+    meta: [
+      { title: "Progres · EduMandiri" },
+      { name: "description", content: "Pantau aktivitas belajar, nilai rata-rata, dan perkembangan pemakaian EduMandiri." },
+      { property: "og:title", content: "Progres · EduMandiri" },
+      { property: "og:description", content: "Pantau aktivitas belajar, nilai rata-rata, dan perkembangan pemakaian EduMandiri." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ProgressPage,
 });
 
