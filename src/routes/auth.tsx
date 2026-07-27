@@ -19,11 +19,6 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-function shouldUseDirectGoogleOAuth() {
-  const hostname = window.location.hostname;
-  return hostname.endsWith(".netlify.app") || hostname === "studi-mandiri.netlify.app";
-}
-
 function AuthPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -44,21 +39,6 @@ function AuthPage() {
     setError(null);
     setLoading(true);
     try {
-      if (shouldUseDirectGoogleOAuth()) {
-        const { error: authError } = await supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: {
-            redirectTo: window.location.origin,
-            queryParams: { prompt: "select_account" },
-          },
-        });
-        if (authError) {
-          setError(authError.message ?? "Gagal masuk dengan Google");
-          setLoading(false);
-        }
-        return;
-      }
-
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
         extraParams: { prompt: "select_account" },
