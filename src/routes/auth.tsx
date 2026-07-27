@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { GraduationCap, Sparkles } from "lucide-react";
 
+const LOVABLE_PROJECT_ID = "43e6a4f9-1ad5-4c26-aa2e-3640810a5517";
+
 export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
@@ -41,7 +43,10 @@ function AuthPage() {
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
-        extraParams: { prompt: "select_account" },
+        extraParams: {
+          prompt: "select_account",
+          project_id: LOVABLE_PROJECT_ID,
+        },
       });
       if (result.error) {
         setError(result.error.message ?? "Gagal masuk dengan Google");

@@ -11,7 +11,7 @@
 [[redirects]]
   from = "/~oauth/*"
   to = "https://oauth.lovable.app/:splat"
-  status = 200
+  status = 302
   force = true
 
 [[redirects]]
