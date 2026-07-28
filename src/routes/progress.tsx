@@ -22,59 +22,114 @@ export const Route = createFileRoute("/progress")({
   component: ProgressPage,
 });
 
+const RANGES = [
+  { key: "7", label: "Mingguan" },
+  { key: "14", label: "2 Minggu" },
+] as const;
+
 function ProgressPage() {
-  
   const { userId } = useAuthUser();
   const fetchFn = useServerFn(getProgress);
+  const [range, setRange] = useState<"7" | "14">("14");
   const { data } = useQuery({
     queryKey: ["progress", userId],
     queryFn: () => fetchFn({ data: { userId: userId! } }),
     enabled: !!userId,
   });
 
+  const activity = data ? data.activity.slice(-Number(range)) : [];
+  const totalEvents = activity.reduce(
+    (s, d: any) => s + (d.threads ?? 0) + (d.essays ?? 0) + (d.analyses ?? 0),
+    0,
+  );
+
   return (
     <AppShell>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl">Laporan Progres</h1>
-          <p className="text-sm text-muted-foreground mt-1">Ringkasan aktivitas & nilai rata-ratamu.</p>
+      <div className="space-y-5">
+        <div className="flex flex-col items-center gap-3">
+          <h1 className="text-2xl sm:text-[28px] font-extrabold">Aktivitas</h1>
+          <div className="pill-toggle">
+            {RANGES.map((r) => (
+              <button
+                key={r.key}
+                data-active={range === r.key}
+                onClick={() => setRange(r.key)}
+                className="pill-toggle-item"
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {!data ? (
-          <p className="text-sm text-muted-foreground">Memuat…</p>
+          <p className="text-sm text-muted-foreground text-center">Memuat…</p>
         ) : (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <Stat label="Thread Diskusi" value={data.totals.threads} />
-              <Stat label="Pesan" value={data.totals.messages} />
-              <Stat label="Esai Dijawab" value={data.totals.essays} />
-              <Stat label="Tugas Dianalisa" value={data.totals.analyses} />
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-3">
-              <Stat label="Rata-rata Skor Esai" value={data.averages.essay ?? "—"} accent />
-              <Stat label="Rata-rata Skor Tugas" value={data.averages.analysis ?? "—"} accent />
-            </div>
-
-            <div className="soft-card p-5">
-              <h2 className="text-lg mb-3">Aktivitas 14 hari terakhir</h2>
-              <div className="h-56">
+            <div className="rounded-[2rem] bg-primary text-primary-foreground p-5 sm:p-6">
+              <div className="flex items-start justify-between gap-3">
+                <p className="font-display text-lg font-bold">
+                  Total aktivitas : {totalEvents}{" "}
+                  <span className="font-sans text-sm font-medium opacity-80">kegiatan</span>
+                </p>
+                <span className="shrink-0 rounded-full bg-primary-foreground/20 px-3 py-1 text-xs font-bold">
+                  {range === "7" ? "7 hari" : "14 hari"}
+                </span>
+              </div>
+              <div className="h-52 mt-4 -mx-2">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={data.activity}>
-                    <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={11} />
-                    <YAxis allowDecimals={false} stroke="var(--muted-foreground)" fontSize={11} />
-                    <Tooltip contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} />
-                    <Bar dataKey="threads" stackId="a" fill="var(--primary)" radius={[0, 0, 0, 0]} />
-                    <Bar dataKey="essays" stackId="a" fill="var(--accent)" />
-                    <Bar dataKey="analyses" stackId="a" fill="var(--secondary)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
+                  <AreaChart data={activity} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="fillA" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--primary-foreground)" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="var(--primary-foreground)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis
+                      dataKey="day"
+                      axisLine={false}
+                      tickLine={false}
+                      stroke="var(--primary-foreground)"
+                      fontSize={11}
+                      opacity={0.75}
+                    />
+                    <Tooltip
+                      cursor={{ stroke: "var(--primary-foreground)", strokeOpacity: 0.4 }}
+                      contentStyle={{
+                        background: "var(--card)",
+                        color: "var(--foreground)",
+                        border: "none",
+                        borderRadius: 14,
+                        fontSize: 12,
+                        boxShadow: "0 8px 24px -12px oklch(0.3 0.01 60 / 0.5)",
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="threads"
+                      stroke="var(--primary-foreground)"
+                      strokeWidth={2}
+                      fill="url(#fillA)"
+                      dot={{ r: 3, fill: "var(--primary-foreground)", strokeWidth: 0 }}
+                    />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex gap-4 text-xs text-muted-foreground mt-2">
-                <span className="flex items-center gap-1"><i className="w-2.5 h-2.5 rounded-sm" style={{background:"var(--primary)"}}/>Thread</span>
-                <span className="flex items-center gap-1"><i className="w-2.5 h-2.5 rounded-sm" style={{background:"var(--accent)"}}/>Esai</span>
-                <span className="flex items-center gap-1"><i className="w-2.5 h-2.5 rounded-sm" style={{background:"var(--secondary)"}}/>Analisa</span>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-extrabold mb-3">Progres</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <Metric label="Thread Diskusi" value={data.totals.threads} tone="primary" />
+                <Metric label="Pesan" value={data.totals.messages} tone="warning" />
+                <Metric label="Esai Dijawab" value={data.totals.essays} tone="success" />
+                <Metric label="Tugas Dianalisa" value={data.totals.analyses} tone="danger" />
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Score label="Rata-rata Skor Esai" value={data.averages.essay ?? "—"} />
+              <Score label="Rata-rata Skor Tugas" value={data.averages.analysis ?? "—"} />
             </div>
           </>
         )}
@@ -83,11 +138,41 @@ function ProgressPage() {
   );
 }
 
-function Stat({ label, value, accent }: { label: string; value: number | string; accent?: boolean }) {
+const TONES = {
+  primary: "var(--primary)",
+  warning: "var(--warning)",
+  success: "var(--success)",
+  danger: "var(--danger)",
+} as const;
+
+function Metric({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: keyof typeof TONES;
+}) {
+  return (
+    <div className="soft-card p-4 flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground truncate">{label}</p>
+        <p className="mt-1 font-display text-2xl font-extrabold">{value}</p>
+      </div>
+      <span
+        className="h-12 w-2 shrink-0 rounded-full opacity-80"
+        style={{ background: TONES[tone] }}
+      />
+    </div>
+  );
+}
+
+function Score({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="soft-card p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`mt-1 font-display text-2xl ${accent ? "text-primary" : "text-foreground"}`}>{value}</p>
+      <p className="mt-1 font-display text-2xl font-extrabold text-primary">{value}</p>
     </div>
   );
 }
