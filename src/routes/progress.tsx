@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { useAuthUser } from "@/lib/user-id";
 import { getProgress } from "@/lib/progress.functions";
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 export const Route = createFileRoute("/progress")({
   ssr: false,
