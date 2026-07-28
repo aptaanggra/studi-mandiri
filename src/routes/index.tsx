@@ -145,37 +145,43 @@ function OnboardingForm({ userId, onDone }: { userId: string; onDone: () => void
 function Dashboard({ config }: { config: { jenjang: string; kelas: number; nama: string | null } }) {
   const navigate = useNavigate();
   const features = [
-    { to: "/chat", title: "Diskusi Sains", desc: "Bahas topik & uji coba bersama AI pembimbing.", icon: FlaskConical, color: "bg-secondary" },
-    { to: "/essay", title: "Soal Esai Hari Ini", desc: "Jawab 1 soal ringan maks 2 paragraf.", icon: BookOpen, color: "bg-accent" },
-    { to: "/analyze", title: "Analisa Tugas", desc: "Foto lembar tugas, dapatkan penilaian AI.", icon: ScanLine, color: "bg-secondary" },
-    { to: "/progress", title: "Laporan Progres", desc: "Lihat aktivitas & rata-rata nilaimu.", icon: LineChart, color: "bg-accent" },
+    { to: "/chat", title: "Diskusi Sains", desc: "Bahas topik & uji coba bersama AI pembimbing.", icon: FlaskConical, tone: "bg-primary text-primary-foreground" },
+    { to: "/essay", title: "Soal Esai Hari Ini", desc: "Jawab 1 soal ringan maks 2 paragraf.", icon: BookOpen, tone: "bg-accent text-accent-foreground" },
+    { to: "/analyze", title: "Analisa Tugas", desc: "Foto lembar tugas, dapatkan penilaian AI.", icon: ScanLine, tone: "bg-secondary text-secondary-foreground" },
+    { to: "/progress", title: "Laporan Progres", desc: "Lihat aktivitas & rata-rata nilaimu.", icon: LineChart, tone: "bg-muted text-foreground" },
   ] as const;
 
   return (
-    <div className="space-y-6">
-      <section className="soft-card p-6 sm:p-8">
-        <p className="text-xs text-muted-foreground uppercase tracking-wider">Halo{config.nama ? `, ${config.nama}` : ""}</p>
-        <h1 className="text-2xl sm:text-3xl mt-1">Siap belajar hari ini?</h1>
-        <p className="text-sm text-muted-foreground mt-2">
-          Jenjang <span className="text-foreground font-medium">{config.jenjang}</span> · Kelas{" "}
-          <span className="text-foreground font-medium">{config.kelas}</span>
+    <div className="space-y-5">
+      <section className="rounded-[2rem] bg-primary text-primary-foreground p-6 sm:p-8">
+        <p className="text-xs uppercase tracking-wider opacity-80">
+          Halo{config.nama ? `, ${config.nama}` : ""}
         </p>
+        <h1 className="text-2xl sm:text-3xl font-extrabold mt-1">Siap belajar hari ini?</h1>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="rounded-full bg-primary-foreground/20 px-3 py-1 text-xs font-bold">
+            Jenjang {config.jenjang}
+          </span>
+          <span className="rounded-full bg-primary-foreground/20 px-3 py-1 text-xs font-bold">
+            Kelas {config.kelas}
+          </span>
+        </div>
       </section>
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {features.map((f) => {
           const Icon = f.icon;
           return (
             <button
               key={f.to}
               onClick={() => navigate({ to: f.to })}
-              className="soft-card p-5 text-left hover:translate-y-[-2px] transition-transform"
+              className="soft-card p-4 sm:p-5 text-left transition-transform hover:-translate-y-1"
             >
-              <div className={`h-10 w-10 rounded-xl ${f.color} grid place-items-center mb-3`}>
-                <Icon className="h-5 w-5 text-primary" />
+              <div className={`h-11 w-11 rounded-2xl ${f.tone} grid place-items-center mb-3`}>
+                <Icon className="h-5 w-5" />
               </div>
-              <h3 className="text-lg">{f.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{f.desc}</p>
+              <h3 className="text-base sm:text-lg font-extrabold leading-tight">{f.title}</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">{f.desc}</p>
             </button>
           );
         })}
